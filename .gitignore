@@ -19,3 +19,11 @@ yarn-error.log
 /.vscode
 src_backup/
 .DS_Store
+
+# MySQL real data -> use named volume
+docker/mysql/data/
+docker/mysql/date/
+
+# MySQL real data -> use named volume
+docker/mysql/data/
+docker/mysql/date/
