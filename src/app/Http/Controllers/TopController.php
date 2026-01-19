@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Purchase;
 
 class TopController extends Controller
 {
@@ -138,5 +140,74 @@ class TopController extends Controller
             'item' => $this->items[$id],
             'payment_method' => $validated['payment_method'],
         ]);
+    }
+
+    /**
+ * プロフィール画面（購入した商品一覧つき）
+ */
+public function profile()
+{
+    $user = Auth::user();
+
+    $purchases = collect();
+
+    try {
+        $purchases = Purchase::query()
+            ->latest()
+            ->where('user_id', $user->id)
+            ->get();
+
+        if (method_exists(Purchase::class, 'product')) {
+            $purchases->load('product');
+        }
+    } catch (\Throwable $e) {
+        \Log::error('Failed to load purchases in profile()', [
+            'error' => $e->getMessage(),
+        ]);
+    }
+
+    if (view()->exists('profile.index')) {
+        return view('profile.index', compact('user', 'purchases'));
+    }
+
+    return response()->view('errors.simple', [
+        'title' => 'Profile',
+        'message' => 'profile.index が未作成です（表示だけ仮）',
+        'user' => $user,
+    ], 200);
+}
+
+
+
+    /**
+     * プロフィール編集画面（とりあえず表示だけ）
+     */
+    public function editProfile()
+    {
+        return view('profile.edit');
+    }
+
+    /**
+     * プロフィール更新（仮）
+     */
+    public function updateProfile(Request $request)
+    {
+        return redirect()->route('profile');
+    }
+
+    /**
+     * 住所変更画面（とりあえず表示だけ）
+     */
+    public function editAddress()
+    {
+        return view('profile.address');
+    }
+
+    /**
+     * 住所更新（仮）
+     */
+    public function updateAddress(Request $request)
+    {
+        return redirect()->route('profile');
     }
 }

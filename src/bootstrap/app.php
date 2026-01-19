@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Providers\AppServiceProvider;
+use App\Providers\FortifyServiceProvider; // ← 追加
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,4 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->withProviders([
+        AppServiceProvider::class,
+        FortifyServiceProvider::class, // ← ここに入れる！
+    ])
+    ->create();

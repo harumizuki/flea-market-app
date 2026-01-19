@@ -17,3 +17,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # 作業ディレクトリを指定
 WORKDIR /var/www/html
+
+# PHP設定ファイルのコピー（教材準拠）
+COPY ./php.ini /usr/local/etc/php/php.ini

@@ -1,53 +1,78 @@
-# FleaMarket App
+# フリマアプリ（fleamarket-app）
 
-Laravelを用いて開発したフリマアプリです。  
-ユーザーは商品を出品・閲覧・購入でき、コメントやいいね機能を通じて他ユーザーと交流できます。
+## アプリ概要
+フリマアプリを想定したWebアプリです。
+商品一覧（おすすめ / マイリスト）、商品詳細、いいね、コメント、出品、購入、送付先住所変更、マイページ機能を実装しています。
 
-## 使用技術
+---
 
-- PHP 8.x
-- Laravel 10.x
-- MySQL 8.x
-- Docker（任意、ローカル環境で使用する場合）
-- Node.js（Tailwind CSS ビルド管理用に使用）
+## 環境構築（Docker）
 
-## セットアップ手順
+### 1. リポジトリをクローン
+git clone <このリポジトリURL>
+cd fleamarket-app
 
-1. リポジトリをクローン
-git clone https://github.com/harumizuki/fleamarket-app.git
+### 2. Dockerを起動
+docker compose up -d --build
 
+### 3. Laravel初期設定
+docker compose exec php composer install
+docker compose exec php cp .env.example .env
+docker compose exec php php artisan key:generate
 
-2. .envファイルを作成
-cp .env.example .env
+### 4. マイグレーション & シーディング
+docker compose exec php php artisan migrate --seed
 
+### 5. 画像表示用のシンボリックリンク作成
+docker compose exec php php artisan storage:link
 
-3. 依存パッケージをインストール
-composer install
-npm install
+---
 
+## 動作確認URL
+アプリ: http://localhost:8080
+phpMyAdmin: http://localhost:8081
 
-4. アプリケーションキーを生成
-php artisan key:generate
+---
 
+## 使用技術（実行環境）
+PHP 8.2  
+Laravel 12.x  
+MySQL 5.7  
+nginx  
+Docker / Docker Compose  
 
-5. データベースを作成・マイグレーション・シーディング
-php artisan migrate --seed
+---
 
+## 実装機能
+商品一覧（おすすめ / マイリスト切替、検索）
+商品詳細
+いいね機能（追加 / 解除、いいね数表示）
+コメント投稿
+商品出品（画像アップロード）
+商品購入
+送付先住所変更
+マイページ
+ログイン / 会員登録（Laravel Fortify）
 
-6. ストレージリンク作成（画像アップロードを使用する場合）
-php artisan storage:link
+---
 
+## 画像アップロードについて
+画像は storage/app/public/ 配下に保存されます。
+php artisan storage:link を実行し、public/storage 経由で表示しています。
 
-7. サーバーを起動
-php artisan serve
+---
 
+## ER図
+erd.png を参照してください。
+
+---
 
 ## テストユーザー
 
-- メールアドレス: test@example.com
-- パスワード: password
+【テストユーザー（メル）】
+メール：test100@example.com
+パスワード：password123
 
-## 注意事項
-
-- 画像アップロード機能を使用する場合は `storage` ディレクトリのパーミッションに注意してください。
-- Docker環境を使用する場合は、`.env` 内のDB接続設定を適宜変更してください。
+【テストユーザー（メル2）】
+メール：test200@example.com
+パスワード：password123
