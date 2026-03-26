@@ -47,6 +47,12 @@
                 </a>
             @endguest
 
+            @if($product->stock == 0)
+                <a href="{{ route('chat.show', $product) }}">
+                    チャットへ
+                </a>
+            @endif
+
             {{-- いいね・コメント --}}
             <div class="product-actions">
     @auth

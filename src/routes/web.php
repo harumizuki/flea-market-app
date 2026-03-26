@@ -7,7 +7,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\TopController;
 use App\Http\Controllers\AddressController;
-
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RatingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -105,3 +106,44 @@ Route::get('/address', [AddressController::class, 'edit'])
 Route::post('/address', [AddressController::class, 'update'])
     ->middleware('auth')
     ->name('address.update');
+
+Route::get('/chat/{product}', [App\Http\Controllers\ChatController::class, 'show'])
+    ->middleware('auth')
+    ->name('chat.show');
+
+Route::post('/chat/{product}', [App\Http\Controllers\ChatController::class, 'store'])
+    ->middleware('auth')
+    ->name('chat.store');
+
+Route::get('/chat/{product}', [ChatController::class, 'show'])
+    ->middleware('auth')
+    ->name('chat.show');
+
+Route::post('/chat/{product}', [ChatController::class, 'store'])
+    ->middleware('auth')
+    ->name('chat.store');
+
+Route::put('/chat/{message}', [ChatController::class, 'update'])
+    ->middleware('auth')
+    ->name('chat.update');
+
+Route::get('/chat/{message}/edit', [ChatController::class, 'edit'])
+    ->middleware('auth')
+    ->name('chat.edit');
+
+Route::delete('/chat/{message}', [ChatController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('chat.destroy');
+
+Route::get('/trades', [ChatController::class, 'index'])
+    ->middleware('auth')
+    ->name('chat.index');
+
+Route::post('/products/{product}/rate', [RatingController::class, 'store'])
+    ->middleware('auth')
+    ->name('rating.store');
+
+Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
+Route::post('/trade/{product}/complete', [App\Http\Controllers\ChatController::class, 'complete'])
+    ->name('trade.complete');

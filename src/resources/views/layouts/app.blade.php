@@ -329,7 +329,7 @@
         </div>
     </header>
 
-    <main class="ct-main">
+    <main>
         {{-- フラッシュ＆エラー --}}
         @if (session('success'))
             <div class="ct-alert ct-alert--success">
