@@ -67,7 +67,11 @@
         @if ($product->image_path)
             <div class="mb-3">
                 <label class="form-label d-block">現在の画像</label>
-                <img src="{{ asset('storage/' . $product->image_path) }}" alt="" class="img-thumbnail" style="max-height: 200px;">
+                <img src="{{ $product->img_url }}"
+                alt=""
+                class="img-thumbnail"
+                style="max-height: 200px;"
+                >
             </div>
         @endif
 

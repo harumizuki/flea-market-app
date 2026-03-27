@@ -21,12 +21,15 @@ class TopController extends Controller
 
         // 取引中の商品
         $tradeProducts = Product::where(function ($query) use ($user) {
-            $query->where('buyer_id', $user->id)
-                ->orWhere('user_id', $user->id);
-            })
-            ->where('is_completed', false)
-            ->orderBy('updated_at', 'desc')
-            ->get();
+    $query->where('buyer_id', $user->id)
+        ->orWhere(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+                ->whereNotNull('buyer_id');
+        });
+    })
+        ->where('is_completed', false)
+        ->orderBy('updated_at', 'desc')
+        ->get();
 
         // 未読件数
         $unreadCounts = [];

@@ -67,7 +67,10 @@
 
                             @if($message->image)
                                 <div>
-                                    <img src="{{ asset('storage/' . $message->image) }}" style="max-width: 100%;">
+                                    <img src="{{ $product->img_url }}"
+                                    alt="{{ $product->name }}"
+                                    class="product-image"
+                                    >
                                 </div>
                             @endif
 
