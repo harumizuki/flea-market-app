@@ -4,6 +4,8 @@
 
 @section('content')
 @php
+    use Illuminate\Support\Str;
+
     $tab = $tab ?? request('tab', 'recommend');
     $keyword = request('keyword', '');
 
@@ -65,11 +67,19 @@
                 <a href="{{ url('/products/' . $product->id) }}" class="product-card">
                     <div class="product-image-wrap">
                         @if(!empty($product->image_path))
-                            <img
-                                src="{{ asset('storage/' . $product->image_path) }}"
-                                alt="{{ $product->name }}"
-                                class="product-image"
-                            >
+                            @if(Str::startsWith($product->image_path, 'products/'))
+                                <img
+                                    src="{{ asset('storage/' . $product->image_path) }}"
+                                    alt="{{ $product->name }}"
+                                    class="product-image"
+                                >
+                            @else
+                                <img
+                                    src="{{ asset($product->image_path) }}"
+                                    alt="{{ $product->name }}"
+                                    class="product-image"
+                                >
+                            @endif
                         @else
                             <div class="product-image-placeholder"></div>
                         @endif

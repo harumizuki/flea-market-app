@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Rating;
 
 class Product extends Model
 {
@@ -34,6 +35,15 @@ class Product extends Model
     public function likes()
     {
         return $this->hasMany(Like::class);
+    }
+
+    public function messages()
+{
+    return $this->hasMany(Message::class);
+}
+    public function ratings()
+    {
+    return $this->hasMany(Rating::class);
     }
 
     public function user()

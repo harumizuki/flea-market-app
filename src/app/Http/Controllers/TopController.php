@@ -26,10 +26,15 @@ class TopController extends Controller
             $q->where('user_id', $user->id)
                 ->whereNotNull('buyer_id');
         });
-    })
+            })
         ->where('is_completed', false)
-        ->orderBy('updated_at', 'desc')
-        ->get();
+        ->with(['messages' => function ($query) {
+    $query->latest();
+        }])
+        ->get()
+        ->sortByDesc(function ($product) {
+        return optional($product->messages->first())->created_at;
+        });
 
         // 未読件数
         $unreadCounts = [];
@@ -43,17 +48,21 @@ class TopController extends Controller
         foreach ($tradeProducts as $product) {
             $count = \App\Models\Message::where('product_id', $product->id)
             ->where('user_id', '!=', $user->id)
+            ->where('is_read', false)
             ->count();
 
         $unreadCounts[$product->id] = $count;
     }
+
+    $totalUnreadCount = array_sum($unreadCounts);
 
     return view('profile.index', compact(
         'user',
         'purchases',
         'tradeProducts',
         'unreadCounts',
-        'averageRating'
+        'averageRating',
+        'totalUnreadCount'
     ));
 }
     /**

@@ -4,6 +4,15 @@
 @section('title', 'プロフィール')
 
 @section('content')
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+</style>
+
 <div class="container">
 
     <h1 class="text-center mb-4">プロフィール</h1>
@@ -62,15 +71,20 @@
 
     <hr class="my-4">
 
-    <h2>取引中の商品</h2>
+<h2>
+    取引中の商品
+    @if ($totalUnreadCount > 0)
+        <span style="color: red; margin-left: 8px;">
+            {{ $totalUnreadCount }}
+        </span>
+    @endif
+</h2>
 
-    @forelse ($tradeProducts as $product)
-        <div style="position: relative; margin-bottom: 15px;">
-            <a href="{{ route('chat.show', $product) }}" style="display: inline-block; padding-left: 25px;">
-                {{ $product->name }}
-            </a>
+@forelse ($tradeProducts as $product)
+    <div style="position: relative; margin-bottom: 15px;">
 
-            {{-- 未読バッジ --}}
+        {{-- 未読バッジ（0のとき非表示） --}}
+        @if (($unreadCounts[$product->id] ?? 0) > 0)
             <span style="
                 position: absolute;
                 top: 50%;
@@ -86,12 +100,37 @@
                 justify-content: center;
                 font-size: 11px;
             ">
-                {{ $unreadCounts[$product->id] ?? 0 }}
+                {{ $unreadCounts[$product->id] }}
             </span>
-        </div>
-    @empty
-        <p>データないよ</p>
-    @endforelse
+        @endif
 
+        <a href="{{ route('chat.show', $product) }}"
+        style="display: flex; align-items: center; gap: 10px; padding-left: 25px; text-decoration: none; color: inherit;">
+
+            {{-- 商品画像 --}}
+            @if ($product->image_path)
+        @if(\Illuminate\Support\Str::startsWith($product->image_path, 'products/'))
+        <img
+            src="{{ asset('storage/' . $product->image_path) }}"
+            alt="{{ $product->name }}"
+            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;"
+        >
+    @else
+        <img
+            src="{{ asset($product->image_path) }}"
+            alt="{{ $product->name }}"
+            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;"
+        >
+        @endif
+    @endif
+
+            {{-- 商品名 --}}
+            <span>{{ $product->name }}</span>
+        </a>
+
+    </div>
+@empty
+    <p>データないよ</p>
+@endforelse
 </div>
 @endsection

@@ -12,15 +12,28 @@ class ChatController extends Controller
 {
     public function show(Product $product)
     {
+    $userId = auth()->id();
+
+    // 🔽 追加：相手のメッセージを既読にする
+    Message::where('product_id', $product->id)
+        ->where('user_id', '!=', $userId)
+        ->update(['is_read' => true]);
+
     $messages = Message::where('product_id', $product->id)
         ->latest()
         ->get();
 
-    $userId = auth()->id();
+    $products = Product::where(function ($query) use ($userId) {
+    $query->where('buyer_id', $userId)
+        ->orWhere(function ($q) use ($userId) {
+            $q->where('user_id', $userId)
+                ->whereNotNull('buyer_id');
+        });
+    })
+        ->where('is_completed', false)
+        ->get();
 
-    $products = Product::where('user_id', $userId)->get();
-
-    $averageRating = Rating::where('product_id', $product->id)->avg('score'); // ←追加
+    $averageRating = Rating::where('product_id', $product->id)->avg('score');
 
     return view('chat.show', compact('product', 'messages', 'products', 'averageRating'));
     }
@@ -103,10 +116,7 @@ class ChatController extends Controller
         abort(403);
     }
 
-    $product->is_completed = true;
-    $product->save();
-
     return redirect()->route('chat.show', $product)
-        ->with('success', '取引完了しました');
+    ->with('success', '評価を行ってください');
     }
 }

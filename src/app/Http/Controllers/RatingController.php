@@ -32,20 +32,31 @@ class RatingController extends Controller
         }
 
         // 評価保存
+        $ratedId = auth()->id() === $product->buyer_id
+            ? $product->user_id   // 購入者 → 出品者
+            : $product->buyer_id; // 出品者 → 購入者
+
         Rating::create([
             'rater_id' => $user->id,
-            'rated_id' => $product->user_id,
+            'rated_id' => $ratedId,
             'product_id' => $product->id,
             'score' => $request->score,
         ]);
+
+        // 評価後に件数チェック
+        $ratingCount = \App\Models\Rating::where('product_id', $product->id)->count();
+
+            if ($ratingCount >= 2) {
+            $product->is_completed = true;
+            $product->save();
+}
         $targetUser = \App\Models\User::find($product->user_id);
 
         if ($targetUser) {
         Mail::to($targetUser->email)->send(new TransactionCompletedMail($product));
         }
 
-        // リダイレクト（とりあえずトップ）
-        return redirect('/mypage')->with('success', '評価しました');
+        return redirect()->route('products.index')->with('success', '評価しました');
     }
 
 }
